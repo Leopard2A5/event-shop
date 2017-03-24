@@ -1,0 +1,14 @@
+---
+version: '2'
+services:
+  rabbitmq:
+    image: rabbitmq:3
+    hostname: rabbitmq
+    ports:
+      - "4369:4369"
+      - "5671-5672:5671-5672"
+      - "25672:25672"
+  listener:
+    build: rabbitmq-listener
+    links:
+      - rabbitmq:rabbitmq
