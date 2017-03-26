@@ -23,6 +23,8 @@ connect(conn)
 ch = conn.create_channel
 q = ch.queue('hello')
 
-q.subscribe(:block => true) do |delivery_info, properties, body|
-  STDERR.puts "Received #{body}"
+while true
+  ch.default_exchange.publish('hello world', :routing_key => q.name)
+  STDERR.puts "Sent hello world"
+  sleep 3
 end
