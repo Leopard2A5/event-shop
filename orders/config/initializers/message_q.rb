@@ -3,9 +3,9 @@ require 'bunny'
 module RabbitMQInitializer
 
   def self.registered(app)
-    # $MSG_Q = self.connect()
-    # $MSG_Q_CHANNEL = $MSG_Q.create_channel
-    # $MSG_Q_QUEUE = $MSG_Q_CHANNEL.queue('orders_created')
+    $MSG_Q = self.connect()
+    $MSG_Q_CHANNEL = $MSG_Q.create_channel
+    $MSG_Q_QUEUE = $MSG_Q_CHANNEL.queue('orders_created')
   end
 
   def self.connect()

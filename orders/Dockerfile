@@ -6,4 +6,4 @@ WORKDIR /app
 ADD . /app
 RUN bundle install
 
-ENTRYPOINT ["ruby", "bin/padrino", "s"]
+ENTRYPOINT ["sh", "entrypoint.sh"]

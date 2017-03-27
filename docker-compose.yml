@@ -4,16 +4,24 @@ services:
   rabbitmq:
     image: rabbitmq:3
     hostname: rabbitmq
-  counter:
-    build: counter
+  order:
+    build: orders
     environment:
       RACK_ENV: production
-  sender:
-    build: rabbitmq-sender
     links:
       - rabbitmq:rabbitmq
-      - counter:counter
-  listener:
-    build: rabbitmq-listener
-    links:
-      - rabbitmq:rabbitmq
+    ports:
+      - 9292:9292
+  # counter:
+  #   build: counter
+  #   environment:
+  #     RACK_ENV: production
+  # sender:
+  #   build: rabbitmq-sender
+  #   links:
+  #     - rabbitmq:rabbitmq
+  #     - counter:counter
+  # listener:
+  #   build: rabbitmq-listener
+  #   links:
+  #     - rabbitmq:rabbitmq
