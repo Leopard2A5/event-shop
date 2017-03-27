@@ -6,12 +6,10 @@ services:
     hostname: rabbitmq
   order:
     build: orders
-    environment:
-      RACK_ENV: production
     links:
       - rabbitmq:rabbitmq
     ports:
-      - 9292:9292
+      - 3000:3000
   # counter:
   #   build: counter
   #   environment:
