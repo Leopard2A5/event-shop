@@ -4,14 +4,15 @@ services:
   rabbitmq:
     image: rabbitmq:3
     hostname: rabbitmq
-    ports:
-      - "4369:4369"
-      - "5671-5672:5671-5672"
-      - "25672:25672"
+  counter:
+    build: counter
+    environment:
+      RACK_ENV: production
   sender:
     build: rabbitmq-sender
     links:
       - rabbitmq:rabbitmq
+      - counter:counter
   listener:
     build: rabbitmq-listener
     links:

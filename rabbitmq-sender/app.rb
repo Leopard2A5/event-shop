@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'bunny'
+require 'rest-client'
 
 def connect(conn)
   attempts = 5
@@ -24,7 +25,10 @@ ch = conn.create_channel
 q = ch.queue('hello')
 
 while true
-  ch.default_exchange.publish('hello world', :routing_key => q.name)
-  STDERR.puts "Sent hello world"
+  response = RestClient.get('http://counter:4567/getAndIncrement')
+  i = response.body.to_i
+  payload = "payload-#{i}"
+  ch.default_exchange.publish(payload, :routing_key => q.name)
+  STDERR.puts "Sent #{payload}"
   sleep 3
 end
