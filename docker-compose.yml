@@ -5,7 +5,11 @@ services:
     image: rabbitmq:3
     hostname: rabbitmq
   order:
-    build: orders
+    image: ruby
+    entrypoint: bash
+    command: ['-c', 'cd /app; bundle install; rake db:migrate; padrino s -h  0.0.0.0']
+    volumes:
+      - ./orders:/app
     links:
       - rabbitmq:rabbitmq
     ports:
