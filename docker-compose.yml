@@ -14,6 +14,14 @@ services:
       - rabbitmq:rabbitmq
     ports:
       - 3000:3000
+  customer:
+    image: ruby
+    entrypoint: bash
+    command: ['-c', 'cd /app; bundle install; ruby app.rb']
+    volumes:
+      - ./customers:/app
+    links:
+      - rabbitmq:rabbitmq
   # counter:
   #   build: counter
   #   environment:
