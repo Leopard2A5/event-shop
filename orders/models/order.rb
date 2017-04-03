@@ -18,7 +18,7 @@ class Order < ActiveRecord::Base
 
   def notify_order_created
     puts "publishing order creation event"
-    $MSG_Q_CHANNEL.default_exchange.publish(self.to_json, routing_key: $MSG_Q_QUEUE.name)
+    $QUEUE_MANAGER.send('orders_created', self.to_json)
   end
 
 end
