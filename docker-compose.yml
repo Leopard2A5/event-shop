@@ -8,6 +8,8 @@ services:
     image: ruby
     entrypoint: bash
     command: ['-c', 'cd /app; bundle install; rake db:migrate; padrino s -h  0.0.0.0']
+    environment:
+      RABBITMQ_HOSTNAME: rabbitmq
     volumes:
       - ./orders:/app
     links:
@@ -18,20 +20,9 @@ services:
     image: ruby
     entrypoint: bash
     command: ['-c', 'cd /app; bundle install; ruby app.rb']
+    environment:
+      RABBITMQ_HOSTNAME: rabbitmq
     volumes:
       - ./customers:/app
     links:
       - rabbitmq:rabbitmq
-  # counter:
-  #   build: counter
-  #   environment:
-  #     RACK_ENV: production
-  # sender:
-  #   build: rabbitmq-sender
-  #   links:
-  #     - rabbitmq:rabbitmq
-  #     - counter:counter
-  # listener:
-  #   build: rabbitmq-listener
-  #   links:
-  #     - rabbitmq:rabbitmq

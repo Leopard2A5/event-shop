@@ -43,6 +43,7 @@ class QueueManager
       puts "Listening to #{queue_name}"
       q = @ch.queue(queue_name)
       q.subscribe(block: true) do |delivery, properties, body|
+        STDERR.puts "RECEIVED ON #{queue_name}: #{body}"
         block.call(body)
       end
     end
