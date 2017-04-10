@@ -1,8 +1,9 @@
 class Order < ActiveRecord::Base
   STATES = %w[
     CREATED
-    TO_BE_SHIPPED
+    CREDITED
     COMPLETED
+    DECLINED
   ]
 
   validates :customer_id, presence: true, length: { minimum: 1 }
@@ -10,15 +11,18 @@ class Order < ActiveRecord::Base
   validates :status, presence: true, inclusion: { in: STATES }
 
   after_initialize :init
-  after_create :notify_order_created
+  after_save :notify_order_changed
 
   def init
     self.status = 'CREATED'
   end
 
-  def notify_order_created
-    puts "publishing order creation event"
-    $QUEUE_MANAGER.send('orders_created', self.to_json)
+  def notify_order_changed
+    if self.status != self.status_was
+      new_state = self.status.downcase
+      STDOUT.puts "publishing state change event for order #{self.id}: '#{self.status_was}' -> '#{self.status}'"
+      $QUEUE_MANAGER.send("orders_#{new_state}", self.to_json)
+    end
   end
 
 end
