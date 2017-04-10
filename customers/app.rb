@@ -32,10 +32,10 @@ q_orders_created.subscribe(:block => true) do |delivery_info, properties, body|
   STDERR.puts "Received #{body}"
   body = JSON.parse(body)
   if body['amount'].to_f < 50.0
-    STDERR.puts "Order credited: #{q_orders_credited.inspect}"
+    STDERR.puts "Order #{body['id']} credited"
     ch.default_exchange.publish(body['id'].to_json, :routing_key => q_orders_credited.name)
   else
-    STDERR.puts "Order declined"
+    STDERR.puts "Order #{body['id']} declined"
     ch.default_exchange.publish(body['id'].to_json, :routing_key => q_orders_declined.name)
   end
 end
