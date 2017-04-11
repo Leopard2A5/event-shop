@@ -28,7 +28,7 @@ q_orders_credited = ch.queue('orders_credited')
 q_orders_declined = ch.queue('orders_declined')
 
 STDERR.puts "Listening on queue orders_created"
-q_orders_created.subscribe(:block => true) do |delivery_info, properties, body|
+q_orders_created.subscribe(manual_ack: true, block: true) do |delivery_info, properties, body|
   STDERR.puts "Received #{body}"
   body = JSON.parse(body)
   if body['amount'].to_f < 50.0
@@ -38,4 +38,5 @@ q_orders_created.subscribe(:block => true) do |delivery_info, properties, body|
     STDERR.puts "Order #{body['id']} declined"
     ch.default_exchange.publish(body['id'].to_json, :routing_key => q_orders_declined.name)
   end
+  ch.ack(delivery_info.delivery_tag)
 end

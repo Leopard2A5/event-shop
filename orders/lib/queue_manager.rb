@@ -42,9 +42,10 @@ class QueueManager
     @pool.perform do
       puts "Listening to #{queue_name}"
       q = @ch.queue(queue_name)
-      q.subscribe(block: true) do |delivery, properties, body|
+      q.subscribe(manual_ack: true, block: true) do |delivery, properties, body|
         STDERR.puts "RECEIVED ON #{queue_name}: #{body}"
         block.call(body)
+        @ch.ack(delivery.delivery_tag)
       end
     end
   end
