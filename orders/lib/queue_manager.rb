@@ -31,7 +31,7 @@ class QueueManager
   end
 
   def send(q, body)
-    queue = @ch.queue(q)
+    queue = @ch.queue(q, durable: true)
     @ch.default_exchange.publish(body, routing_key: queue.name)
   end
 
@@ -41,7 +41,7 @@ class QueueManager
 
     @pool.perform do
       puts "Listening to #{queue_name}"
-      q = @ch.queue(queue_name)
+      q = @ch.queue(queue_name, durable: true)
       q.subscribe(manual_ack: true, block: true) do |delivery, properties, body|
         STDERR.puts "RECEIVED ON #{queue_name}: #{body}"
         block.call(body)

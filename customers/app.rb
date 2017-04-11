@@ -23,9 +23,9 @@ conn = Bunny.new(:hostname => rabbitmq_hostname)
 connect(conn)
 
 ch = conn.create_channel
-q_orders_created = ch.queue('orders_created')
-q_orders_credited = ch.queue('orders_credited')
-q_orders_declined = ch.queue('orders_declined')
+q_orders_created = ch.queue('orders_created', durable: true)
+q_orders_credited = ch.queue('orders_credited', durable: true)
+q_orders_declined = ch.queue('orders_declined', durable: true)
 
 STDERR.puts "Listening on queue orders_created"
 q_orders_created.subscribe(manual_ack: true, block: true) do |delivery_info, properties, body|
