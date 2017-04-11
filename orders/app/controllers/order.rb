@@ -9,7 +9,8 @@ Orders::App.controllers '/orders', :produces => :json do
   post '/' do
     order = Order.new(
       customer_id: params['customer_id'],
-      amount: params['amount']
+      amount: params['amount'],
+      status: 'CREATED'
     )
     if order.valid?
       order.save.to_json
