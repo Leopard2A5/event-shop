@@ -18,7 +18,7 @@ class Order < ActiveRecord::Base
       case self.status
       when 'CREATED'
         STDOUT.puts "publishing state change event for order #{self.id}: '#{self.status_was}' -> '#{self.status}'"
-        $QUEUE_MANAGER.send("orders_created", self.to_json)
+        $QUEUE_MANAGER.send(self.to_json)
       end
     end
   end

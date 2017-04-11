@@ -20,6 +20,7 @@ class QueueManager
     end
 
     @ch = @conn.create_channel
+    @exchange = @ch.fanout("orders_created")
 
     @pool = Workers::Pool.new
     @listens = Hash.new
@@ -30,9 +31,8 @@ class QueueManager
     @pool.dispose(10)
   end
 
-  def send(q, body)
-    queue = @ch.queue(q, durable: true)
-    @ch.default_exchange.publish(body, routing_key: queue.name)
+  def send(body)
+    @exchange.publish(body)
   end
 
   def listen(queue_name, &block)
@@ -41,7 +41,9 @@ class QueueManager
 
     @pool.perform do
       puts "Listening to #{queue_name}"
-      q = @ch.queue(queue_name, durable: true)
+      q = @ch.queue("orders:#{queue_name}", durable: true)
+      q.bind(queue_name)
+
       q.subscribe(manual_ack: true, block: true) do |delivery, properties, body|
         STDERR.puts "RECEIVED ON #{queue_name}: #{body}"
         block.call(body)
