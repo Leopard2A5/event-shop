@@ -13,14 +13,11 @@ Orders::App.controllers '/orders', :produces => :json do
     order.to_json
   end
 
-  post '/' do
-    order = Order.new(
-      customer_id: params['customer_id'],
-      amount: params['amount'],
-      status: 'CREATED'
-    )
+  post '/', params: [:customer_id, :amount] do
+    order = Order.new(params.merge({status: 'CREATED'}))
     if order.valid?
-      order.save.to_json
+      order.save
+      order.to_json
     else
       [400, "#{order.errors.messages.to_json}"]
     end
