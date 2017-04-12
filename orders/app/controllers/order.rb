@@ -6,6 +6,13 @@ Orders::App.controllers '/orders', :produces => :json do
     Order.all.to_json
   end
 
+  get '/:id' do
+    order = Order.find_by_id(params['id'])
+    halt 404 unless order
+
+    order.to_json
+  end
+
   post '/' do
     order = Order.new(
       customer_id: params['customer_id'],
