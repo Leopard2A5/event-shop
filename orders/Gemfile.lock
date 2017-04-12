@@ -73,7 +73,6 @@ GEM
     tilt (2.0.7)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    workers (0.6.0)
 
 PLATFORMS
   ruby
@@ -84,7 +83,6 @@ DEPENDENCIES
   padrino (= 0.14.0.1)
   rake
   sqlite3
-  workers
 
 BUNDLED WITH
    1.14.6

@@ -1,4 +1,3 @@
-require 'workers'
 require 'bunny'
 
 class QueueManager
@@ -22,13 +21,12 @@ class QueueManager
     @ch = @conn.create_channel
     @exchange = @ch.fanout("orders_created")
 
-    @pool = Workers::Pool.new
     @listens = Hash.new
   end
 
   def close
+    @ch.close
     @conn.close
-    @pool.dispose(10)
   end
 
   def send(body)
@@ -36,19 +34,17 @@ class QueueManager
   end
 
   def listen(queue_name, &block)
-    raise "no no" if @listens[queue_name]
+    raise "already listening to #{queue_name}" if @listens[queue_name]
     @listens[queue_name] = true
 
-    @pool.perform do
-      puts "Listening to #{queue_name}"
-      q = @ch.queue("orders:#{queue_name}", durable: true)
-      q.bind(queue_name)
+    puts "Listening to #{queue_name}"
+    q = @ch.queue("orders:#{queue_name}", durable: true)
+    q.bind(queue_name)
 
-      q.subscribe(manual_ack: true, block: true) do |delivery, properties, body|
-        STDERR.puts "RECEIVED ON #{queue_name}: #{body}"
-        block.call(body)
-        @ch.ack(delivery.delivery_tag)
-      end
+    q.subscribe(manual_ack: true) do |delivery, properties, body|
+      STDERR.puts "RECEIVED ON #{queue_name}: #{body}"
+      block.call(body)
+      @ch.ack(delivery.delivery_tag)
     end
   end
 
