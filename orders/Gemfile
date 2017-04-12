@@ -25,6 +25,7 @@ gem 'sqlite3'
 # Padrino Stable Gem
 gem 'padrino', '0.14.0.1'
 gem 'bunny', '>=2.5.1'
+gem 'rack-parser'
 
 # Or Padrino Edge
 # gem 'padrino', :github => 'padrino/padrino-framework'
